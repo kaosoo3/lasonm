@@ -48,7 +48,7 @@ export default function AdminDashboard({ onNavigateBack }: AdminDashboardProps) 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'add' | 'edit' | 'view'>('add');
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [openMenus, setOpenMenus] = useState<string[]>(['beneficiaries', 'packages']);
+  const [openMenus, setOpenMenus] = useState<string[]>(['beneficiaries', 'packages']); // Always keep these menus open
 
   const stats = calculateStats();
   const criticalAlerts = getCriticalAlerts();
@@ -229,12 +229,12 @@ export default function AdminDashboard({ onNavigateBack }: AdminDashboardProps) 
 
     // Show beneficiaries management component
     if (['beneficiaries-list', 'status-management', 'delayed', 'activity-log'].includes(activeTab)) {
-      return <BeneficiariesManagement onBack={() => setActiveTab('overview')} initialTab={activeTab} />;
+      return <BeneficiariesManagement initialTab={activeTab} />;
     }
 
     // Show package management component
     if (['packages-list', 'bulk-send', 'individual-send', 'tracking', 'distribution-reports'].includes(activeTab)) {
-      return <PackageManagement onBack={() => setActiveTab('overview')} initialTab={activeTab} />;
+      return <PackageManagement initialTab={activeTab} />;
     }
 
     // Overview Tab
@@ -661,7 +661,12 @@ export default function AdminDashboard({ onNavigateBack }: AdminDashboardProps) 
                   <button
                     onClick={() => {
                       if (item.children) {
-                        toggleMenu(item.id);
+                        // For beneficiaries and packages, navigate to first child instead of toggling
+                        if (item.id === 'beneficiaries' || item.id === 'packages') {
+                          setActiveTab(item.children[0].id);
+                        } else {
+                          toggleMenu(item.id);
+                        }
                       } else {
                         setActiveTab(item.id);
                       }
@@ -676,7 +681,7 @@ export default function AdminDashboard({ onNavigateBack }: AdminDashboardProps) 
                       <IconComponent className={`w-5 h-5 ml-3 ${isActive ? 'text-blue-600' : ''}`} />
                       <span>{item.name}</span>
                     </div>
-                    {item.children && (
+                    {item.children && !(item.id === 'beneficiaries' || item.id === 'packages') && (
                       <div className={`transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}>
                         <ChevronRight className="w-4 h-4" />
                       </div>

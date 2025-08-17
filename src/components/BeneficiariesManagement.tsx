@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Users, Search, Filter, Plus, Eye, Edit, Phone, MessageSquare, CheckCircle, Clock, AlertTriangle, Shield, UserCheck, MapPin, Calendar, FileText, Download, Star, UserPlus } from 'lucide-react';
+import { Users, Search, Filter, Plus, Eye, Edit, Phone, MessageSquare, CheckCircle, Clock, AlertTriangle, Shield, UserCheck, MapPin, Calendar, FileText, Download, Star, UserPlus } from 'lucide-react';
 import { 
   mockBeneficiaries, 
   mockPackages, 
@@ -11,24 +11,19 @@ import {
 import BeneficiaryDetailsModal from './BeneficiaryDetailsModal';
 
 interface BeneficiariesManagementProps {
-  onBack: () => void;
   initialTab?: string;
 }
 
-export default function BeneficiariesManagement({ onBack, initialTab = 'list' }: BeneficiariesManagementProps) {
-  const [activeTab, setActiveTab] = useState(initialTab === 'beneficiaries' ? 'list' : initialTab.replace('beneficiaries-', ''));
+export default function BeneficiariesManagement({ initialTab = 'beneficiaries-list' }: BeneficiariesManagementProps) {
+  const currentTab = initialTab === 'beneficiaries-list' ? 'list' : 
+                     initialTab === 'status-management' ? 'status-management' :
+                     initialTab === 'delayed' ? 'delayed' :
+                     initialTab === 'activity-log' ? 'activity-log' : 'list';
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [modalType, setModalType] = useState<'add' | 'edit' | 'message'>('add');
-
-  const tabs = [
-    { id: 'list', name: 'قائمة المستفيدين', icon: Users },
-    { id: 'status-management', name: 'إدارة الحالات', icon: UserCheck },
-    { id: 'delayed', name: 'المتأخرين', icon: Clock },
-    { id: 'activity-log', name: 'سجل النشاط', icon: FileText },
-  ];
 
   const handleViewBeneficiary = (beneficiary: Beneficiary) => {
     setSelectedBeneficiary(beneficiary);
@@ -88,63 +83,10 @@ export default function BeneficiariesManagement({ onBack, initialTab = 'list' }:
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4 space-x-reverse">
-              <button
-                onClick={onBack}
-                className="flex items-center space-x-2 space-x-reverse text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ArrowRight className="w-5 h-5 ml-2" />
-                <span>العودة للوحة الرئيسية</span>
-              </button>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <div className="flex items-center space-x-3 space-x-reverse">
-                <div className="bg-blue-100 p-2 rounded-lg">
-                  <Users className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">إدارة المستفيدين</h1>
-                  <p className="text-sm text-gray-600">إدارة شاملة لجميع المستفيدين في النظام</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8 space-x-reverse">
-            {tabs.map((tab) => {
-              const IconComponent = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 space-x-reverse px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
-                    isActive
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  <IconComponent className="w-4 h-4 ml-2" />
-                  <span>{tab.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Beneficiaries List Tab */}
-        {activeTab === 'list' && (
+        {currentTab === 'list' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -364,7 +306,7 @@ export default function BeneficiariesManagement({ onBack, initialTab = 'list' }:
         )}
 
         {/* Status Management Tab */}
-        {activeTab === 'status-management' && (
+        {currentTab === 'status-management' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -488,7 +430,7 @@ export default function BeneficiariesManagement({ onBack, initialTab = 'list' }:
         )}
 
         {/* Delayed Tab */}
-        {activeTab === 'delayed' && (
+        {currentTab === 'delayed' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -548,7 +490,7 @@ export default function BeneficiariesManagement({ onBack, initialTab = 'list' }:
         )}
 
         {/* Activity Log Tab */}
-        {activeTab === 'activity-log' && (
+        {currentTab === 'activity-log' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
